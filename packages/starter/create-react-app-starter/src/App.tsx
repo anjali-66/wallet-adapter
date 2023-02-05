@@ -139,6 +139,36 @@ const Content: FC = () => {
           console.log("Transaction error:", err);  
         }
     }
+    async function decrement() {
+        const provider = getProvider()
+        
+        if(!provider) {
+            throw("Provider is null");
+        }
+        // create the program interface combining the idl, program ID, and provider
+        
+        //Bug with default importing when handling string value types. Fix it by reconverting to json
+        
+        const a = JSON.stringify(idl);
+        const b = JSON.parse(a);
+        const program = new program(b, idk.metadata,address, provider);
+        
+        try {
+            //interact with the program via rpc
+            await program.rpc.decrement({
+                accounts: {
+                    myAccount: baseAccount.publicKey,
+                },
+            });
+            
+            
+            const account = await program.account.myAccount.fetch(baseAccount.publicKey);
+            console.log('account data: ', account.data.toString());
+        } catch(err) {
+          console.log("Transaction error:", err);  
+        }
+    }
+    
     
     //expected to do it for decrement and update
     
@@ -147,7 +177,8 @@ const Content: FC = () => {
             <button onClick={createCounter}>Initialize</ button>
             <button>Update</ button>
             <button onClick={increment}>Increment</ button>
-            <button>Decrement</ button>
+            <button onClick={decrement}>Decrement</ button>
+            <button onclick >SundayIcecream</ button>
             <WalletMultiButton />
         </div>
     );
